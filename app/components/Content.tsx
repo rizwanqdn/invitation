@@ -31,25 +31,29 @@ const Content: React.FC<ContentProps> = ({ content }) => {
         <Image
           src="/ansarullah-logo.png"
           alt="Majlis Ansarullah Logo"
-          width={128} // You must define width and height for Image
-          height={128} // These are the intrinsic dimensions of the image
-          className="rounded-full border-4 border-yellow-300 shadow-lg w-24 h-24 md:w-32 md:h-32"
+          width={300} // You must define width and height for Image
+          height={300} // These are the intrinsic dimensions of the image
+          className="rounded-full border-4 border-yellow-300 shadow-lg w-40 h-40 md:w-32 md:h-32"
         />
       </div>
 
       {/* The countdown message and countdown are grouped */}
       <div className="mt-4">
-        <p className="text-xl sm:text-2xl font-semibold mb-4 text-amber-200">{content.title}</p>
-        <Countdown targetDate={targetDate} />
-        <h1 className='text-xl sm:text-2xl font-extrabold mb-6 animate-fadeIn text-yellow-300 drop-shadow-lg'>Left</h1>
+        <p className="text-3xl sm:text-3xl font-semibold mb-4 text-amber-200">{content.title}</p>
+        
+        {/* ADDED: A new flexbox container to center the countdown and heading */}
+        <div className="flex flex-col items-center">
+            <Countdown targetDate={targetDate} />
+            <h1 className='text-3xl sm:text-3xl font-extrabold mb-6 animate-fadeIn text-yellow-300 drop-shadow-lg'>Left</h1>
+        </div>
       </div>
 
       {/* Date and Location in larger fonts */}
-      <p className="text-lg sm:text-xl font-medium text-amber-200 mb-2">{content.date}</p>
-      <p className="text-md sm:text-lg font-medium text-gray-300 mb-6">{content.location}</p>
+      <p className="text-lg sm:text-xl font-extrabold text-amber-200 mb-2">{content.date}</p>
+      <p className="text-md sm:text-lg font-extrabold text-gray-300 mb-6">{content.location}</p>
       
       {/* Spiritual message */}
-      <p className="text-base sm:text-lg leading-relaxed text-gray-300 mb-6">{content.subtitle}</p>
+      <p className="text-base sm:text-lg leading-relaxed text-yellow-300 mb-6">{content.subtitle}</p>
       
       {/* Hashtags */}
       <div className="flex flex-wrap justify-center gap-2 mt-6">
