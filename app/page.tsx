@@ -20,15 +20,15 @@ export default function Home() {
       <div className="relative z-10 w-full max-w-2xl backdrop-blur-sm bg-black/30 p-6 sm:p-8 rounded-3xl shadow-3xl border-2 border-yellow-300/40">
         
         {/* English Headings with a staggered delay */}
-        <div className="p-2 sm:p-4 rounded-lg animate-fadeIn" style={{ animationDelay: '0.5s' }}>
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-1 sm:mb-2 text-yellow-300 drop-shadow-lg">Salana Ijtema</h1>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-1 sm:mb-2 text-yellow-300 drop-shadow-lg">Majlis Ansarullah Bharat 2025</h1>
+        <div className="p-4 sm:p-4 rounded-lg animate-fadeIn" style={{ animationDelay: '0.5s' }}>
+          <h1 className="text-2xl sm:text-4xl md:text-6xl font-extrabold mb-1 sm:mb-2 text-yellow-300 drop-shadow-lg">Salana Ijtema</h1>
+          <h1 className="text-xl sm:text-3xl md:text-4xl font-extrabold mb-1 sm:mb-2 text-yellow-300 drop-shadow-lg">Majlis Ansarullah Bharat 2025</h1>
         </div>
 
         {/* Urdu Headings with a staggered delay */}
-        <div className="p-2 sm:p-4 rounded-lg animate-fadeIn" style={{ animationDelay: '1s' }}>
-          <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-1 sm:mb-2 text-yellow-300 drop-shadow-lg">سالانہ اجتماع مجلس انصار اللہ بھارت</h1>
-          <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-1 sm:mb-2 text-yellow-300 drop-shadow-lg">2025</h1>
+        <div className="p-4 sm:p-4 rounded-lg animate-fadeIn" style={{ animationDelay: '1s' }}>
+          <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className="text-2xl sm:text-4xl md:text-6xl font-extrabold mb-1 sm:mb-2 text-yellow-300 drop-shadow-lg">سالانہ اجتماع مجلس انصار اللہ بھارت</h1>
+          <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className="text-xl sm:text-3xl md:text-4xl font-extrabold mb-1 sm:mb-2 text-yellow-300 drop-shadow-lg">2025</h1>
         </div>
          
         {/* Content component with a longer delay */}
