@@ -48,7 +48,7 @@ const config: Config = {
         animatedGradient: 'animatedGradient 15s ease infinite',
         pulseGlow: 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         fadeInUp: 'fadeInUp 1s ease-out forwards',
-            'flip-in': 'flipIn 0.8s ease-in-out forwards',
+        
         // ADDED: Animation class for the fast pulse
         'pulse-fast': 'pulseFast 1s ease-in-out infinite',
       },
