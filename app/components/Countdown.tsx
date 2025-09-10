@@ -48,7 +48,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
 
   return (
     <div className="flex justify-center gap-4 mb-10 w-full max-w-sm md:max-w-md animate-slideInFromTop">
-      {timerComponents.length ? timerComponents : <span className="text-xl">Time's up!</span>}
+      {timerComponents.length ? timerComponents : <span className="text-xl">Time&apos;s up!</span>}
     </div>
   );
 };
