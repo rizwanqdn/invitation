@@ -39,15 +39,15 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
     }
 
     return (
-      <div key={interval} className="flex flex-col items-center text-center bg-white/10 rounded-xl p-4 w-1/4 backdrop-blur-sm shadow-lg animate-pulseGlow">
-        <span className="text-3xl md:text-5xl font-bold transition-transform duration-500">{String(timeLeft[interval as keyof typeof timeLeft]).padStart(2, '0')}</span>
-        <span className="text-xs md:text-base uppercase tracking-wider mt-1 text-gray-200">{interval}</span>
+      <div key={interval} className="flex flex-col items-center text-center bg-white/10 rounded-xl p-2 sm:p-4 w-1/4 backdrop-blur-sm shadow-lg animate-pulseGlow">
+        <span className="text-xl sm:text-3xl md:text-5xl font-bold transition-transform duration-500">{String(timeLeft[interval as keyof typeof timeLeft]).padStart(2, '0')}</span>
+        <span className="text-xs sm:text-sm md:text-base uppercase tracking-wider mt-1 text-gray-200">{interval}</span>
       </div>
     );
   });
 
   return (
-    <div className="flex justify-center gap-4 mb-10 w-full max-w-sm md:max-w-md animate-slideInFromTop">
+    <div className="flex justify-center gap-2 sm:gap-4 mb-4 sm:mb-10 w-full max-w-xs sm:max-w-sm md:max-w-md animate-slideInFromTop">
       {timerComponents.length ? timerComponents : <span className="text-xl">Time&apos;s up!</span>}
     </div>
   );
