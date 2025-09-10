@@ -6,35 +6,41 @@ import Content from './components/Content';
 
 // Define a type for a single theme
 type Theme = {
-  bgImage: string;
+  mediaType: 'image' | 'video';
+  mediaSource: string; // This will hold the path to the image or video
   borderColor: string;
   textColor: string;
 };
 
-// Define your list of themes with local background images
+// Define your list of themes with local background images and a video
 const themes: Theme[] = [
   {
-    bgImage: "/islamic-pattern.jpg",
+    mediaType: 'image',
+    mediaSource: "/islamic-pattern.jpg",
     borderColor: "border-yellow-300/40",
     textColor: "text-yellow-300",
   },
   {
-    bgImage: "/white-pattern.jpg",
+    mediaType: 'image',
+    mediaSource: "/white-pattern.jpg",
     borderColor: "border-teal-300/40",
     textColor: "text-teal-300",
   },
   {
-    bgImage: "/black-pattern.jpg",
+    mediaType: 'image',
+    mediaSource: "/black-pattern.jpg",
     borderColor: "border-pink-300/40",
     textColor: "text-pink-300",
   },
   {
-    bgImage: "/backgrounds/background1.jpg",
+    mediaType: 'image',
+    mediaSource: "/backgrounds/background1.jpg",
     borderColor: "border-gray-500/40",
     textColor: "text-gray-300",
   },
   {
-    bgImage: "/backgrounds/background2.jpg",
+    mediaType: 'video',
+    mediaSource: "/backgrounds/background-video.mp4", // This is your video source
     borderColor: "border-orange-500/40",
     textColor: "text-orange-300",
   },
@@ -42,11 +48,17 @@ const themes: Theme[] = [
 
 export default function Home() {
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * themes.length);
     setCurrentTheme(themes[randomIndex]);
   }, []);
+
+  // Function to toggle the audio
+  const toggleAudio = () => {
+    setIsMuted(!isMuted);
+  };
 
   const content = {
     title: 'The countdown begins!',
@@ -61,10 +73,49 @@ export default function Home() {
   }
 
   return (
-    <main className={`relative flex min-h-screen **w-screen** flex-col items-center justify-center p-4 text-white text-center font-sans overflow-hidden`}>
-      {/* Background Image Layer */}
-      <div className="absolute inset-0 z-0 bg-cover bg-center **bg-fixed**" style={{ backgroundImage: `url('${currentTheme.bgImage}')` }}></div>
+    <main className="relative flex min-h-screen w-screen flex-col items-center justify-center p-4 text-white text-center font-sans overflow-hidden">
+      {/* Background Layer: Conditionally render video or image */}
+      {currentTheme.mediaType === 'video' ? (
+        <video
+          className="absolute inset-0 z-0 w-full h-full object-cover bg-fixed"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src={currentTheme.mediaSource} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      ) : (
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center bg-fixed animate-ken-burns" 
+          style={{ backgroundImage: `url('${currentTheme.mediaSource}')` }}
+        ></div>
+      )}
       
+      {/* Audio Element: Controls the volume based on state */}
+      <audio autoPlay loop muted={isMuted}>
+        <source src="/background-music.mp3" type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+
+      {/* Audio Control Button */}
+      <button 
+        onClick={toggleAudio}
+        className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-md transition-colors text-white"
+        aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
+      >
+        {isMuted ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M7 3h4m-4 4h4m0 0l5 5m-5 5v-4m4 4h-4m-4 0v-4" />
+            </svg>
+        ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9l1.414 1.414a9 9 0 010 12.728m-2.828-9.9l1.414 1.414a9 9 0 010 12.728M5.8 7.172a3.001 3.001 0 00-4.243 0l-1.414 1.414a3.001 3.001 0 000 4.243l1.414 1.414a3.001 3.001 0 004.243 0l1.414-1.414z" />
+            </svg>
+        )}
+      </button>
+
       {/* Main Content Container with a subtle blur effect */}
       <div className={`relative z-10 w-full max-w-2xl backdrop-blur-sm bg-black/30 p-6 sm:p-8 rounded-3xl shadow-3xl border-2 ${currentTheme.borderColor}`}>
         
