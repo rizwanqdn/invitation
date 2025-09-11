@@ -24,22 +24,23 @@ const Content: React.FC<ContentProps> = ({ content }) => {
   }, []);
 
   return (
-    <div className={`p-6 md:p-8 bg-black/10 rounded-2xl shadow-xl border border-white/10 transition-all duration-1000 ease-in-out delay-[1500ms] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+    <div className={`flex flex-col items-center justify-center p-6 md:p-8 bg-black/10 rounded-2xl shadow-xl border border-white/10 transition-all duration-1000 ease-in-out delay-[1500ms] ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
       
       {/* The logo is now an optimized Next.js Image component */}
-      <div className="flex justify-center mb-3">
-        <Image
-          src="/ansarullah-logo.png"
-          alt="Majlis Ansarullah Logo"
-          width={200} // You must define width and height for Image
-          height={200} // These are the intrinsic dimensions of the image
-          // Adjusted the size for mobile: w-32 h-32 on small screens, and w-40 h-40 on medium screens and up
-          className="rounded-full border-6 border-yellow-300 shadow-lg w-15 h-15 md:w-42 md:h-42"
-        />
+      <div className="relative flex justify-center mb-3">
+        {/* A container for the logo to control its size */}
+        <div className="relative w-32 h-32 md:w-48 md:h-48">
+          <Image
+            src="/ansarullah-logo.png"
+            alt="Majlis Ansarullah Logo"
+            fill // Use fill to make the image cover the parent container
+            className="rounded-full border-6 border-yellow-300 shadow-lg object-contain" // object-contain ensures the image fits without cropping
+          />
+        </div>
       </div>
 
       {/* The countdown message and countdown are grouped */}
-      <div className="mt-4">
+      <div className="mt-4 flex flex-col items-center">
         {/* Adjusted title size for smaller screens */}
         <p className="text-3xl sm:text-3xl md:text-3xl font-semibold mb-4 text-amber-200">{content.title}</p>
         
@@ -68,3 +69,4 @@ const Content: React.FC<ContentProps> = ({ content }) => {
 };
 
 export default Content;
+

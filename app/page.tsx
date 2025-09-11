@@ -49,10 +49,18 @@ const themes: Theme[] = [
 export default function Home() {
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
   const [isMuted, setIsMuted] = useState(true);
+  const [headingsVisible, setHeadingsVisible] = useState(false);
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * themes.length);
     setCurrentTheme(themes[randomIndex]);
+
+    // Set headings to visible after a delay
+    const headingTimer = setTimeout(() => {
+      setHeadingsVisible(true);
+    }, 500); // Wait 0.5s before starting the flip animation
+
+    return () => clearTimeout(headingTimer);
   }, []);
 
   // Function to toggle the audio
@@ -65,7 +73,7 @@ export default function Home() {
     subtitle: 'Mark your calendars for a weekend of spiritual enlightenment and brotherhood.',
     date: '🗓️ Dates: 24 | 25 | 26 October 2025 Friday | Saturday | Sunday',
     location: '📍 Location: Qadian, Punjab, India',
-    hashtags: ['AnsarIjtemaBharat2025', 'MajlisAnsarullah', 'SalanaIjtema2025', 'Ahmadiyyat' ,'IslamInIndia']
+    hashtags: ['AnsarIjtemaBharat2025', 'MajlisAnsarullah', 'SalanaIjtema2025', 'Ahmadiyyat', 'IslamInIndia']
   };
 
   if (!currentTheme) {
@@ -120,16 +128,16 @@ export default function Home() {
       <div className={`relative z-10 w-full max-w-2xl backdrop-blur-sm bg-black/30 p-6 sm:p-8 rounded-3xl shadow-3xl border-2 ${currentTheme.borderColor}`}>
         
         {/* English Headings with a staggered delay and new animation */}
-        <div className="p-4 sm:p-4 rounded-lg animate-fadeIn" style={{ animationDelay: '0.5s' }}>
+        <div className={`p-4 sm:p-4 rounded-lg transition-transform duration-1000 ${headingsVisible ? 'animate-flip-in' : 'opacity-0'}`} style={{ animationDelay: '0.5s' }}>
           <h1 className={`text-5xl sm:text-4xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>Salana Ijtema</h1>
           <h1 className={`text-3xl sm:text-4xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>Majlis Ansarullah Bharat 2025</h1>
         </div>
 
         {/* Urdu Headings with a staggered delay and new animation */}
-        <div className="p-4 sm:p-4 rounded-lg animate-fadeIn" style={{ animationDelay: '1s' }}>
-          <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className={`text-5xl sm:text-6xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>سالانہ اجتماع </h1>
-         <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className={`text-5xl sm:text-6xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>مجلس انصار اللہ بھارت</h1>
-         <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className={`text-5xl sm:text-6xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>2025</h1>
+        <div className={`p-4 sm:p-4 rounded-lg transition-transform duration-1000 ${headingsVisible ? 'animate-flip-in' : 'opacity-0'}`} style={{ animationDelay: '1s' }}>
+          <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className={`text-6xl sm:text-6xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>سالانہ اجتماع </h1>
+         <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className={`text-6xl sm:text-6xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>مجلس انصار اللہ بھارت</h1>
+         <h1  className={`text-5xl sm:text-6xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>2025</h1>
         </div>
          
         {/* Content component with a longer delay */}
