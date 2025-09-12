@@ -49,26 +49,26 @@ const themes: Theme[] = [
 
   // Solid color backgrounds
   {
-    backgroundType: 'color',
-    background: "#334155", // A cool dark gray
+    backgroundType: 'image',
+    background: "/backgrounds/background3.jpg",
     borderColor: "border-indigo-400/40",
     textColor: "text-indigo-200",
   },
   {
-    backgroundType: 'color',
-    background: "#166534", // A dark green
+    backgroundType: 'image',
+    background: "/backgrounds/background4.jpg",
     borderColor: "border-green-300/40",
     textColor: "text-green-200",
   },
   {
-    backgroundType: 'color',
-    background: "#4c0519", // A dark red
+    backgroundType: 'image',
+    background: "/backgrounds/background4.jpg",
     borderColor: "border-red-400/40",
     textColor: "text-red-300",
   },
   {
-    backgroundType: 'color',
-    background: "#0f172a", // Very dark blue/black
+    backgroundType: 'image',
+    background: "/backgrounds/background5.jpg",
     borderColor: "border-blue-400/40",
     textColor: "text-blue-300",
   },
