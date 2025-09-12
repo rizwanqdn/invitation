@@ -213,7 +213,7 @@ export default function Home() {
         </div>
         
         {/* Fixed Navigation Link at the bottom */}
-        <div className="mt-auto text-xl text-gray-300 animate-pulse">
+        <div className="mt-auto text-1xl text-yellow-500 animate-pulse">
             Click to {cardIndex === totalCards - 1 ? 'start over' : 'continue'}
         </div>
       </div>
