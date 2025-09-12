@@ -35,14 +35,13 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
   const [currentColorIndex, setCurrentColorIndex] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
-      // Update the color index to cycle through the colors
       setCurrentColorIndex((prevIndex) => (prevIndex + 1) % countdownColors.length);
     }, 1000);
 
-    return () => clearTimeout(timer);
-  });
+    return () => clearInterval(timer);
+  }, [targetDate]); // Add targetDate to the dependency array
 
   const timerComponents = Object.keys(timeLeft).map((interval) => {
     if (timeLeft[interval as keyof typeof timeLeft] === undefined) {
@@ -52,7 +51,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
     return (
       <div key={interval} className="flex flex-col items-center text-center bg-white/10 rounded-xl p-2 sm:p-4 w-1/4 backdrop-blur-sm shadow-lg animate-pulseGlow">
         <span 
-          className={`text-xl sm:text-3xl md:text-5xl font-bold transition-transform duration-500 ${countdownColors[currentColorIndex]}`}>
+          className={`text-3xl sm:text-3xl md:text-5xl font-bold transition-transform duration-500 ${countdownColors[currentColorIndex]}`}>
           {String(timeLeft[interval as keyof typeof timeLeft]).padStart(2, '0')}
         </span>
         <span className="text-xs sm:text-sm md:text-base uppercase tracking-wider mt-1 text-gray-200">{interval}</span>
@@ -61,7 +60,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
   });
 
   return (
-    <div className="flex justify-center gap-2 sm:gap-4 mb-4 sm:mb-10 w-full max-w-xs sm:max-w-sm md:max-w-md animate-slideInFromTop">
+    <div className="flex justify-center gap-2 sm:gap-4 mb-4 sm:mb-10 w-full max-w-xs sm:max-w-sm md:max-w-md">
       {timerComponents.length ? timerComponents : <span className="text-xl">Time&apos;s up!</span>}
     </div>
   );

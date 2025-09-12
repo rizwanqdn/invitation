@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @font-face {
   font-family: 'Jameel Noori Nastaleeq';
   src: url('/fonts/urdu-font.woff2') format('woff2'),
@@ -24,6 +23,7 @@
 .animate-ken-burns {
   animation: ken-burns-zoom 15s ease-in-out infinite alternate;
 }
+
 @keyframes flipIn {
   0% {
     transform: perspective(400px) rotateY(90deg);
@@ -37,4 +37,59 @@
 
 .animate-flip-in {
   animation: flipIn 1s ease-in-out forwards;
+}
+
+@keyframes flip-upside-down {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(180deg);
+  }
+}
+
+.animate-flip-upside-down {
+  animation: flip-upside-down 1s ease-in-out forwards;
+}
+
+@keyframes slide-out-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-slide-out-left {
+  animation: slide-out-left 0.5s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-in forwards;
+}
+
+/* Optional: For your countdown component, you might want a gentle glow
+  This animation is not in your original file, but can enhance the effect
+*/
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.animate-pulseGlow {
+  animation: pulseGlow 2s ease-in-out infinite;
 }

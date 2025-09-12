@@ -2,109 +2,84 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Content from './components/Content';
+import Image from 'next/image';
+import Countdown from './components/Countdown';
 
 // Define a type for a single theme
 type Theme = {
-  mediaType: 'image' | 'video';
-  mediaSource: string; // This will hold the path to the image or video
+  mediaSource: string; // This will hold the path to the image
   borderColor: string;
   textColor: string;
 };
 
-// Define your list of themes with local background images and a video
+// Define your list of themes with local background images
 const themes: Theme[] = [
   {
-    mediaType: 'image',
     mediaSource: "/islamic-pattern.jpg",
     borderColor: "border-yellow-300/40",
     textColor: "text-yellow-300",
   },
   {
-    mediaType: 'image',
     mediaSource: "/white-pattern.jpg",
     borderColor: "border-teal-300/40",
     textColor: "text-teal-300",
   },
   {
-    mediaType: 'image',
     mediaSource: "/black-pattern.jpg",
     borderColor: "border-pink-300/40",
     textColor: "text-pink-300",
   },
   {
-    mediaType: 'image',
     mediaSource: "/backgrounds/background1.jpg",
     borderColor: "border-gray-500/40",
     textColor: "text-gray-300",
   },
-  {
-    mediaType: 'video',
-    mediaSource: "/backgrounds/background-video.mp4", // This is your video source
-    borderColor: "border-orange-500/40",
-    textColor: "text-orange-300",
+    {
+    mediaSource: "/backgrounds/background2.jpg",
+    borderColor: "border-gray-500/40",
+    textColor: "text-gray-300",
   },
+  // You can add more image backgrounds here if needed
 ];
 
 export default function Home() {
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
   const [isMuted, setIsMuted] = useState(true);
-  const [headingsVisible, setHeadingsVisible] = useState(false);
+  const [cardIndex, setCardIndex] = useState(0);
+
+  const targetDate = new Date('2025-10-24T00:00:00');
+  const totalCards = 4;
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * themes.length);
     setCurrentTheme(themes[randomIndex]);
-
-    // Set headings to visible after a delay
-    const headingTimer = setTimeout(() => {
-      setHeadingsVisible(true);
-    }, 500); // Wait 0.5s before starting the flip animation
-
-    return () => clearTimeout(headingTimer);
   }, []);
 
-  // Function to toggle the audio
   const toggleAudio = () => {
     setIsMuted(!isMuted);
   };
 
-  const content = {
-    title: 'The countdown begins!',
-    subtitle: 'Mark your calendars for a weekend of spiritual enlightenment and brotherhood.',
-    date: '🗓️ Dates: 24 | 25 | 26 October 2025 Friday | Saturday | Sunday',
-    location: '📍 Location: Qadian, Punjab, India',
-    hashtags: ['AnsarIjtemaBharat2025', 'MajlisAnsarullah', 'SalanaIjtema2025', 'Ahmadiyyat', 'IslamInIndia']
+  const handleCardClick = () => {
+    setCardIndex((prevIndex) => (prevIndex + 1) % totalCards);
   };
-
+  
   if (!currentTheme) {
     return null;
   }
 
+  const transformValue = `translateX(-${cardIndex * 100}%)`;
+
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center p-4 text-white text-center font-sans overflow-hidden">
-      {/* Background Layer: Conditionally render video or image */}
-      {currentTheme.mediaType === 'video' ? (
-        <video
-          className="absolute inset-0 z-0 w-full h-full object-cover bg-fixed"
-          autoPlay
-          loop
-          muted
-          playsInline
-        >
-          <source src={currentTheme.mediaSource} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      ) : (
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center bg-fixed animate-ken-burns" 
-          style={{ backgroundImage: `url('${currentTheme.mediaSource}')` }}
-        ></div>
-      )}
+      {/* Background Layer: Always an image */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-fixed animate-ken-burns" 
+        style={{ backgroundImage: `url('${currentTheme.mediaSource}')` }}
+      ></div>
       
       {/* Audio Element: Controls the volume based on state */}
       <audio autoPlay loop muted={isMuted}>
         <source src="/background-music.mp3" type="audio/mpeg" />
-        Your browser does not support the audio element.
       </audio>
 
       {/* Audio Control Button */}
@@ -124,25 +99,72 @@ export default function Home() {
         )}
       </button>
 
-      {/* Main Content Container with a subtle blur effect */}
-      <div className={`relative z-10 w-full max-w-2xl backdrop-blur-sm bg-black/30 p-6 sm:p-8 rounded-3xl shadow-3xl border-2 ${currentTheme.borderColor}`}>
+      {/* Main Content Container */}
+      <div 
+        onClick={handleCardClick}
+        className={`relative z-10 w-full max-w-2xl backdrop-blur-sm bg-black/30 p-6 sm:p-8 rounded-3xl shadow-3xl border-2 ${currentTheme.borderColor} min-h-[500px] flex flex-col items-center justify-between overflow-hidden cursor-pointer`}>
         
-        {/* English Headings with a staggered delay and new animation */}
-        <div className={`p-4 sm:p-4 rounded-lg transition-transform duration-1000 ${headingsVisible ? 'animate-flip-in' : 'opacity-0'}`} style={{ animationDelay: '0.5s' }}>
-          <h1 className={`text-5xl sm:text-4xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>Salana Ijtema</h1>
-          <h1 className={`text-3xl sm:text-4xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>Majlis Ansarullah Bharat 2025</h1>
+        {/* Fixed Header Content (Always Visible) */}
+        <div className="flex flex-col items-center">
+            <h1 className={`text-4xl sm:text-5xl font-extrabold my-1 ${currentTheme.textColor} drop-shadow-lg`}>Salana Ijtema</h1>
+            <h1 className={`text-2xl sm:text-3xl font-extrabold mb-2 ${currentTheme.textColor} drop-shadow-lg`}>Majlis Ansarullah Bharat 2025</h1>
         </div>
 
-        {/* Urdu Headings with a staggered delay and new animation */}
-        <div className={`p-4 sm:p-4 rounded-lg transition-transform duration-1000 ${headingsVisible ? 'animate-flip-in' : 'opacity-0'}`} style={{ animationDelay: '1s' }}>
-          <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className={`text-6xl sm:text-6xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>سالانہ اجتماع </h1>
-         <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className={`text-6xl sm:text-6xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>مجلس انصار اللہ بھارت</h1>
-         <h1  className={`text-5xl sm:text-6xl md:text-6xl font-extrabold mb-1 sm:mb-2 ${currentTheme.textColor} drop-shadow-lg animate-pulse-fast`}>2025</h1>
+        {/* Inner container for sliding cards - now with fixed width and overflow */}
+        <div className="relative w-full h-full flex-grow overflow-hidden">
+          <div 
+            className="flex transition-transform duration-500 ease-in-out w-full h-full"
+            style={{ transform: transformValue }}
+          >
+            {/* Card 1: Logo and Urdu Headings */}
+            <div className="flex-shrink-0 w-full flex flex-col items-center justify-center p-4">
+              <div className="relative w-32 h-32 md:w-48 md:h-48 mb-4">
+                <Image
+                  src="/ansarullah-logo.png"
+                  alt="Majlis Ansarullah Logo"
+                  fill
+                  className="rounded-full border-6 border-yellow-300 shadow-lg object-contain"
+                />
+              </div>
+              {/* Urdu Headings */}
+              <div className="mt-4">
+                  <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className={`text-5xl sm:text-6xl font-extrabold my-1 ${currentTheme.textColor} drop-shadow-lg`}>سالانہ اجتماع </h1>
+                  <h1 style={{ fontFamily: "'Jameel Noori Nastaleeq', sans-serif" }} className={`text-5xl sm:text-6xl font-extrabold my-1 ${currentTheme.textColor} drop-shadow-lg`}>مجلس انصار اللہ بھارت</h1>
+                  <h1 className={`text-4xl sm:text-5xl font-extrabold my-1 ${currentTheme.textColor} drop-shadow-lg`}>2025</h1>
+              </div>
+            </div>
+            
+            {/* Card 2: Countdown */}
+            <div className="flex-shrink-0 w-full flex flex-col items-center justify-center p-4">
+              <h2 className={`text-4xl font-bold ${currentTheme.textColor} mb-6`}>Countdown</h2>
+              <Countdown targetDate={targetDate} />
+            </div>
+            
+            {/* Card 3: Dates and Location */}
+            <div className="flex-shrink-0 w-full flex flex-col items-center justify-center p-4">
+              <h2 className={`text-4xl font-bold ${currentTheme.textColor} mb-6`}>Event Details</h2>
+              <p className="text-xl sm:text-2xl font-extrabold text-amber-200 mb-2">🗓️ Dates: 24 | 25 | 26 October 2025</p>
+              <p className="text-lg sm:text-xl font-extrabold text-gray-300 mb-6">📍 Location: Qadian, Punjab, India</p>
+              <p className="text-xl sm:text-xl leading-relaxed text-yellow-300 mb-6">Mark your calendars for a weekend of spiritual enlightenment and brotherhood.</p>
+            </div>
+            
+            {/* Card 4: Hashtags */}
+            <div className="flex-shrink-0 w-full flex flex-col items-center justify-center p-4">
+              <h2 className={`text-4xl font-bold ${currentTheme.textColor} mb-6`}>Hashtags</h2>
+              <div className="flex flex-wrap justify-center gap-2 mt-4">
+                  <span className="text-sm sm:text-base font-medium bg-white/20 px-3 py-1 rounded-full text-white hover:bg-white/40 transition-colors">#AnsarIjtemaBharat2025</span>
+                  <span className="text-sm sm:text-base font-medium bg-white/20 px-3 py-1 rounded-full text-white hover:bg-white/40 transition-colors">#MajlisAnsarullah</span>
+                  <span className="text-sm sm:text-base font-medium bg-white/20 px-3 py-1 rounded-full text-white hover:bg-white/40 transition-colors">#SalanaIjtema2025</span>
+                  <span className="text-sm sm:text-base font-medium bg-white/20 px-3 py-1 rounded-full text-white hover:bg-white/40 transition-colors">#Ahmadiyyat</span>
+                  <span className="text-sm sm:text-base font-medium bg-white/20 px-3 py-1 rounded-full text-white hover:bg-white/40 transition-colors">#IslamInIndia</span>
+              </div>
+            </div>
+          </div>
         </div>
-         
-        {/* Content component with a longer delay */}
-        <div className="mt-8 animate-fadeIn" style={{ animationDelay: '1.5s' }}>
-          <Content content={content} />
+        
+        {/* Fixed Navigation Link at the bottom */}
+        <div className="mt-auto text-xl text-gray-300 animate-pulse">
+            Click to {cardIndex === totalCards - 1 ? 'start over' : 'continue'}
         </div>
       </div>
     </main>
