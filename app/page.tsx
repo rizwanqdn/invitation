@@ -109,7 +109,7 @@ export default function Home() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.155-2.071a1 1 0 00-1.488.948v4.144a1 1 0 001.488.948l3.155-2.071a1 1 0 000-1.858z" />
           </svg>
         )}
-      </button>
+      </button> 
 
       {/* Main Content Container */}
       <div 
