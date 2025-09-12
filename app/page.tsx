@@ -5,49 +5,80 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Countdown from './components/Countdown';
 
-// Define a type for a single theme
+// Define a type for a single theme, now with a backgroundType
 type Theme = {
-  mediaSource: string; // This will hold the path to the image
+  backgroundType: 'image' | 'color';
+  background: string; // This will hold the path to the image or a hex color code
   borderColor: string;
   textColor: string;
 };
 
-// Define your list of themes with local background images
+// Define your list of themes with both images and colors
 const themes: Theme[] = [
+  // Image backgrounds
   {
-    mediaSource: "/islamic-pattern.jpg",
+    backgroundType: 'image',
+    background: "/islamic-pattern.jpg",
     borderColor: "border-yellow-300/40",
     textColor: "text-yellow-300",
   },
   {
-    mediaSource: "/white-pattern.jpg",
+    backgroundType: 'image',
+    background: "/white-pattern.jpg",
     borderColor: "border-teal-300/40",
     textColor: "text-teal-300",
   },
   {
-    mediaSource: "/black-pattern.jpg",
+    backgroundType: 'image',
+    background: "/black-pattern.jpg",
     borderColor: "border-pink-300/40",
     textColor: "text-pink-300",
   },
   {
-    mediaSource: "/backgrounds/background1.jpg",
+    backgroundType: 'image',
+    background: "/backgrounds/background1.jpg",
     borderColor: "border-gray-500/40",
     textColor: "text-gray-300",
   },
   {
-    mediaSource: "/backgrounds/background2.jpg",
+    backgroundType: 'image',
+    background: "/backgrounds/background2.jpg",
     borderColor: "border-gray-500/40",
     textColor: "text-gray-300",
   },
-  // You can add more image backgrounds here if needed
+
+  // Solid color backgrounds
+  {
+    backgroundType: 'color',
+    background: "#334155", // A cool dark gray
+    borderColor: "border-indigo-400/40",
+    textColor: "text-indigo-200",
+  },
+  {
+    backgroundType: 'color',
+    background: "#166534", // A dark green
+    borderColor: "border-green-300/40",
+    textColor: "text-green-200",
+  },
+  {
+    backgroundType: 'color',
+    background: "#4c0519", // A dark red
+    borderColor: "border-red-400/40",
+    textColor: "text-red-300",
+  },
+  {
+    backgroundType: 'color',
+    background: "#0f172a", // Very dark blue/black
+    borderColor: "border-blue-400/40",
+    textColor: "text-blue-300",
+  },
 ];
 
 export default function Home() {
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false); // New state to track if audio is playing
+  const [isMuted, setIsMuted] = useState(true);
   const [cardIndex, setCardIndex] = useState(0);
 
-  // Use useRef to get a direct reference to the audio element
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const targetDate = new Date('2025-10-24T00:00:00');
@@ -60,12 +91,14 @@ export default function Home() {
 
   const toggleAudio = () => {
     if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
+      if (isMuted) {
+        audioRef.current.muted = false;
         audioRef.current.play();
+      } else {
+        audioRef.current.muted = true;
+        audioRef.current.pause();
       }
-      setIsPlaying(!isPlaying);
+      setIsMuted(!isMuted);
     }
   };
 
@@ -81,14 +114,21 @@ export default function Home() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center p-4 text-white text-center font-sans overflow-hidden">
-      {/* Background Layer: Always an image */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-fixed animate-ken-burns" 
-        style={{ backgroundImage: `url('${currentTheme.mediaSource}')` }}
-      ></div>
+      {/* Background Layer: Conditionally render image or color */}
+      {currentTheme.backgroundType === 'image' ? (
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center bg-fixed animate-ken-burns" 
+          style={{ backgroundImage: `url('${currentTheme.background}')` }}
+        ></div>
+      ) : (
+        <div 
+          className="absolute inset-0 z-0 bg-fixed" 
+          style={{ backgroundColor: currentTheme.background }}
+        ></div>
+      )}
       
       {/* Audio Element: Controls the volume based on state */}
-      <audio ref={audioRef} autoPlay loop muted>
+      <audio ref={audioRef} autoPlay loop muted={isMuted}>
         <source src="/background-music.mp3" type="audio/mpeg" />
       </audio>
 
@@ -96,20 +136,18 @@ export default function Home() {
       <button 
         onClick={toggleAudio}
         className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-white/20 hover:bg-white/40 backdrop-blur-md transition-colors text-white"
-        aria-label={isPlaying ? 'Pause audio' : 'Play audio'}
+        aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
       >
-        {isPlaying ? (
-          // Pause Icon
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 9v6m4-6v6m7.293-9.293a1 1 0 00-1.414 0L12 11.586l-5.879-5.879a1 1 0 00-1.414 1.414L10.586 13l-5.879 5.879a1 1 0 101.414 1.414L12 14.414l5.879 5.879a1 1 0 101.414-1.414L13.414 12l5.879-5.879a1 1 0 000-1.414z" />
-          </svg>
+        {isMuted ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M7 3h4m-4 4h4m0 0l5 5m-5 5v-4m4 4h-4m-4 0v-4" />
+            </svg>
         ) : (
-          // Play Icon
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14.752 11.168l-3.155-2.071a1 1 0 00-1.488.948v4.144a1 1 0 001.488.948l3.155-2.071a1 1 0 000-1.858z" />
-          </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9l1.414 1.414a9 9 0 010 12.728m-2.828-9.9l1.414 1.414a9 9 0 010 12.728M5.8 7.172a3.001 3.001 0 00-4.243 0l-1.414 1.414a3.001 3.001 0 000 4.243l1.414 1.414a3.001 3.001 0 004.243 0l1.414-1.414z" />
+            </svg>
         )}
-      </button> 
+      </button>
 
       {/* Main Content Container */}
       <div 
