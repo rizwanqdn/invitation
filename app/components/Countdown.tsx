@@ -53,7 +53,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate}) => {
     }
 
     return (
-      <div key={interval} className="flex flex-col items-center text-center bg-white/10  sm:p-4 w-1/4 backdrop-blur-sm shadow-lg animate-pulseGlow">
+      <div key={interval} className="flex flex-col items-center text-center bg-white/10  sm:p-4 w-1/4 backdrop-blur-sm shadow-lg rounded-xl animate-pulseGlow">
         <span 
           className={`text-2xl sm:text-3xl md:text-5xl font-bold transition-transform duration-500 ${countdownColors[currentColorIndex]}`}>
           {String(timeLeft[interval as keyof typeof timeLeft]).padStart(2, '0')}

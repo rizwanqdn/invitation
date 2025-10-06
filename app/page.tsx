@@ -84,9 +84,9 @@ const cardStyles = [
   // Card 3: Links - Deep Orange/Red
   { 
     gradient: 'linear-gradient(140deg, #c2410c 0%, #b91c1c 100%)', 
-    text: 'text-orange-100', 
+    text: 'text-blue-900', 
     border: 'border-orange-400',
-    bgColor: '#b91c1c' // Red
+    bgColor: '#7393B3' // Red
   },
 ];
 const totalCards = 4;
@@ -125,6 +125,7 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
     cardBgStyle.backgroundColor = bgColor; 
     animationClasses = 'animate-fadeInUp'; 
     outerCardClasses += ' hover:scale-[1.01]'; 
+    // Ensure active card content is pointer-events auto for links/buttons inside children
     pointerEvents = 'auto'; 
   } else if (index < currentIndex) {
     const offset = currentIndex - index;
@@ -173,6 +174,7 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
         className={`w-full h-full flex flex-col items-center justify-center rounded-[30px] sm:rounded-[40px] transition-all duration-300 transition-colors border ${cardBorderClass} ${animationClasses} overflow-y-auto relative`} 
         style={{ ...cardBgStyle, ...glowStyle }} 
       >
+        {/* Removed pointerEvents: 'none' wrap to allow links/buttons inside children */}
         <div>
             {children}
         </div>
@@ -181,7 +183,7 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
   );
 };
 
-// --- Main Component (Updated for Full Screen Coverage) ---
+// --- Main Component (Modified to remove all scroll/swipe/dot navigation) ---
 
 export default function Home() {
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
@@ -197,8 +199,12 @@ export default function Home() {
   });
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  // Ref to hold the most current card index for stable handlers
   const currentCardIndexRef = useRef(cardIndex); 
   
+  // scrollTimeoutRef and isScrollLockedRef removed as scrolling is disabled
+
   const targetDate = new Date('2025-10-24T00:00:00');
 
   useEffect(() => {
@@ -230,6 +236,9 @@ export default function Home() {
   const setCardIndexDirectly = useCallback((index: number) => {
       setCardIndex(index);
   }, []);
+
+  // --- SCROLL/TOUCH HANDLERS REMOVED ---
+  // handleScroll, handleTouchStart, handleTouchEnd, and their useEffect cleanup are all removed.
   
   if (!currentTheme) {
     return null;
@@ -240,12 +249,11 @@ export default function Home() {
 
   return (
     <main 
-      // Changed h-screen to min-h-[100dvh] for best mobile fullscreen coverage
-      className="relative flex min-h-[100dvh] w-full flex-col items-center justify-center p-2 sm:p-4 text-white text-center font-sans overflow-hidden focus:outline-none"
+      className="relative flex h-screen min-h-screen flex-col items-center justify-center p-2 sm:p-4 text-white text-center font-sans overflow-hidden focus:outline-none"
       tabIndex={-1} 
     >
       
-      {/* Background Layer 1: Static Image + Dark Overlay (Covers all inset-0, including behind the notch) */}
+      {/* Background Layer 1: Static Image + Dark Overlay */}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center bg-fixed animate-ken-burns" 
         style={{ backgroundImage: `url('${currentTheme.background}')` }}
@@ -284,12 +292,12 @@ export default function Home() {
       {/* Main Content Container (3D Viewport) */}
       
       <div 
-        // Changed fixed height classes to flex-col and h-full to occupy available space
-        className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] shadow-3xl h-[80vh] md:h-[90vh] flex flex-col items-center justify-center overflow-hidden transition-all duration-800 ease-in-out `} 
+        // onTouchStart and onTouchEnd are removed here
+        className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] h-[65vh] md:h-[85vh] flex flex-col items-center justify-between overflow-hidden transition-all duration-800 ease-in-out `} 
       >
         
         {/* Inner container for 3D card viewport */}
-        <div className="relative w-full h-full">
+        <div className="relative w-full h-full flex-grow">
           
           {/* Card 0: Logo and Urdu Headings */}
           <Card index={0} currentIndex={cardIndex} currentTheme={currentTheme} >
@@ -365,7 +373,7 @@ export default function Home() {
                             target="_blank" 
                             rel="noopener noreferrer" 
                             className={`w-full text-sm font-medium px-3 py-2 rounded-full text-white transition-all duration-300 transform hover:scale-[1.03] border ${cardStyles[3].border} shadow-md hover:shadow-lg`} 
-                            style={{ backgroundImage: cardStyles[3].gradient }}
+                          
                         >
                             {link.text}
                         </a>
@@ -374,6 +382,8 @@ export default function Home() {
             </div>
           </Card>
         </div>
+
+        {/* Navigation Dots Indicator (Removed) */}
       </div>
 
       {/* --- Card Number Navigation Buttons (REMAINS) --- */}
@@ -387,11 +397,9 @@ export default function Home() {
                 }}
                 className={`w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-black/50 
                   ${navIndex === cardIndex 
-                    // Use a dynamic color for the active button based on the card style for better visual harmony
-                    ? `bg-[${cardStyles[navIndex].bgColor}] text-white scale-110` 
+                    ? `bg-red-600 text-black scale-110` 
                     : 'bg-white/10 text-white hover:bg-white/30'
                   }`}
-                style={navIndex === cardIndex ? { backgroundColor: cardStyles[navIndex].bgColor } : {}}
                 aria-label={`Go to card ${navIndex + 1}`}
               >
                 {navIndex + 1}
