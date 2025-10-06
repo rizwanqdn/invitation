@@ -293,7 +293,7 @@ export default function Home() {
       
       <div 
         // onTouchStart and onTouchEnd are removed here
-        className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] h-[65vh] md:h-[85vh] flex flex-col items-center justify-between overflow-hidden transition-all duration-800 ease-in-out `} 
+        className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] h-[54vh] md:h-[85vh] flex flex-col items-center justify-between overflow-hidden transition-all duration-800 ease-in-out `} 
       >
         
         {/* Inner container for 3D card viewport */}
