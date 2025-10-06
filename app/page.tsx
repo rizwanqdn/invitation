@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import Countdown from './components/Countdown';
+// Assuming the path to your Countdown component is correct
+import Countdown from './components/Countdown'; 
 
-// --- Theme Definitions ---
+// --- Theme Definitions (Unchanged) ---
 
 type Theme = {
   background: string;
@@ -75,11 +76,10 @@ const cardStyles = [
   },
   // Card 2: Details - ELECTRIC VIOLET (Modern Variant) ⚡
   { 
-    // New Gradient: Blends bright magenta (#e93b82) and electric violet (#663399)
     gradient: 'linear-gradient(140deg, #e93b82 0%, #663399 100%)', 
-    text: 'text-pink-100', // Changed text color for better contrast
-    border: 'border-pink-400', // Changed border
-    bgColor: '#8A2BE2' // Solid Bright Blue Violet (Modern Fallback Color)
+    text: 'text-pink-100', 
+    border: 'border-pink-400', 
+    bgColor: '#8A2BE2' 
   },
   // Card 3: Links - Deep Orange/Red
   { 
@@ -91,7 +91,7 @@ const cardStyles = [
 ];
 const totalCards = 4;
 
-// --- Card Component with 3D Logic ---
+// --- Card Component (Simplified) ---
 
 interface CardProps {
   index: number;
@@ -100,41 +100,34 @@ interface CardProps {
   children: React.ReactNode;
 }
 
-// Interface for custom CSS variable used in glowStyle
 interface GlowStyle extends React.CSSProperties {
     '--glow-color': string;
 }
 
 const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
   const isActive = index === currentIndex;
-  const { gradient, text, border, bgColor } = cardStyles[index]; 
+  const { text, border, bgColor } = cardStyles[index]; 
   
-  // FIX: Changed let to const for properties only assigned once
   const cardBgStyle: React.CSSProperties = {};
   const cardBorderClass = border;
   
   let transform = 'translateZ(0) rotateX(0deg)';
   let opacity = 1;
   let zIndex = 10;
-  // FIX: Used explicit type for reassigned variable
   let pointerEvents: 'auto' | 'none' = 'auto'; 
   
   let animationClasses = '';
   let outerCardClasses = 'transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]'; 
 
   if (isActive) {
-    // Active card: Front and slightly forward
     transform = 'translateZ(10px) scale(1)'; 
     zIndex = 50;
-    
-    // Set the active card's background color dynamically
     cardBgStyle.backgroundColor = bgColor; 
-    
     animationClasses = 'animate-fadeInUp'; 
-    
     outerCardClasses += ' hover:scale-[1.01]'; 
+    // Ensure active card content is pointer-events auto for links/buttons inside children
+    pointerEvents = 'auto'; 
   } else if (index < currentIndex) {
-    // Previous cards: Peel Up and Away
     const offset = currentIndex - index;
     const translationY = -100 - (offset * 3);
     const rotationX = -90 - (offset * 5); 
@@ -142,29 +135,22 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
     transform = `translateZ(${offset * 50}px) translateY(${translationY}%) rotateX(${rotationX}deg)`; 
     opacity = 0.9; 
     zIndex = 60 + index; 
-    pointerEvents = 'none'; // Reassignment is okay as it was declared with 'let'
-    
-    // Use static gradient/color for the peeled stack via inline style
+    pointerEvents = 'none';
     cardBgStyle.backgroundImage = cardStyles[index].gradient;
     cardBgStyle.opacity = 0.7;
   } else {
-    // Next cards: Stacked behind
     const offset = index - currentIndex;
     const translationY = offset * 5; 
     const scale = 1 - (offset * 0.08);
 
     transform = `translateZ(-${offset * 50}px) translateY(${translationY}%) scale(${scale})`;
     zIndex = 40 - offset; 
-    
-    // Use static gradient/color for the stack behind via inline style
-    cardBgStyle.backgroundImage = gradient;
+    cardBgStyle.backgroundImage = cardStyles[index].gradient;
     cardBgStyle.opacity = 0.8; 
     outerCardClasses += ' hover:scale-[1.01]'; 
   }
 
-  // --- GLOW EFFECT LOGIC ---
   const glowColor = cardStyles[index].bgColor;
-  // FIX: Explicitly typed to include the custom CSS variable
   const glowStyle: GlowStyle = { 
     '--glow-color': glowColor,
     boxShadow: `
@@ -181,32 +167,43 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
         transform,
         opacity,
         zIndex,
-        // FIX: pointerEvents is now correctly typed
         pointerEvents: pointerEvents, 
       }}
     >
       <div 
-        className={`w-full h-full flex flex-col items-center justify-center rounded-[30px] sm:rounded-[40px] transition-all duration-300 transition-colors border ${cardBorderClass} ${animationClasses} overflow-y-auto`}
+        className={`w-full h-full flex flex-col items-center justify-center rounded-[30px] sm:rounded-[40px] transition-all duration-300 transition-colors border ${cardBorderClass} ${animationClasses} overflow-y-auto relative`} 
         style={{ ...cardBgStyle, ...glowStyle }} 
       >
-        {children}
+        {/* Removed pointerEvents: 'none' wrap to allow links/buttons inside children */}
+        <div>
+            {children}
+        </div>
       </div>
     </div>
   );
 };
 
-// --- Main Component ---
+// --- Main Component (Modified to remove all scroll/swipe/dot navigation) ---
 
 export default function Home() {
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
   const [isMuted, setIsMuted] = useState(true);
-  const [cardIndex, setCardIndex] = useState(0);
   
-  const [touchStartY, setTouchStartY] = useState<number | null>(null);
-
+  // Initialize cardIndex from localStorage
+  const [cardIndex, setCardIndex] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedIndex = localStorage.getItem('lastCardIndex');
+      return savedIndex !== null ? parseInt(savedIndex, 10) : 0;
+    }
+    return 0;
+  });
+  
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const mainRef = useRef<HTMLElement | null>(null); 
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null); 
+  
+  // Ref to hold the most current card index for stable handlers
+  const currentCardIndexRef = useRef(cardIndex); 
+  
+  // scrollTimeoutRef and isScrollLockedRef removed as scrolling is disabled
 
   const targetDate = new Date('2025-10-24T00:00:00');
 
@@ -214,6 +211,15 @@ export default function Home() {
     const randomIndex = Math.floor(Math.random() * themes.length);
     setCurrentTheme(themes[randomIndex]);
   }, []);
+
+  // Update the ref AND localStorage whenever cardIndex changes
+  useEffect(() => {
+    currentCardIndexRef.current = cardIndex;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('lastCardIndex', cardIndex.toString());
+    }
+  }, [cardIndex]);
+
 
   const toggleAudio = () => {
     if (audioRef.current) {
@@ -226,96 +232,13 @@ export default function Home() {
     }
   };
 
-  const navigateCard = useCallback((direction: 'prev' | 'next') => {
-    setCardIndex((prevIndex) => {
-      if (direction === 'next') {
-        if (prevIndex === totalCards - 1) return totalCards - 1;
-        return prevIndex + 1;
-      }
-      if (prevIndex === 0) return 0;
-      return prevIndex - 1;
-    });
+  // Function to set the card index directly (used by the new buttons)
+  const setCardIndexDirectly = useCallback((index: number) => {
+      setCardIndex(index);
   }, []);
 
-  // --- SCROLL HANDLING (Desktop) ---
-  const handleScroll = useCallback((e: WheelEvent) => {
-    if (scrollTimeoutRef.current) {
-      return;
-    }
-
-    const direction: 'prev' | 'next' = e.deltaY > 0 ? 'next' : 'prev';
-
-    e.preventDefault(); 
-
-    if (
-        (direction === 'next' && cardIndex < totalCards - 1) || 
-        (direction === 'prev' && cardIndex > 0)
-    ) {
-        navigateCard(direction);
-    }
-    
-    scrollTimeoutRef.current = setTimeout(() => {
-      scrollTimeoutRef.current = null;
-    }, 700);
-
-  }, [cardIndex, navigateCard]);
-
-
-  useEffect(() => {
-    window.addEventListener('wheel', handleScroll, { passive: false });
-
-    return () => {
-      window.removeEventListener('wheel', handleScroll);
-      if (scrollTimeoutRef.current) {
-          clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, [handleScroll]);
-
-  // --- TOUCH/SWIPE HANDLING (Mobile) ---
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartY(e.touches[0].clientY); 
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartY === null) return;
-    const touchEndY = e.changedTouches[0].clientY;
-    const touchDifferenceY = touchStartY - touchEndY; 
-    const swipeThreshold = 50;
-
-    if (Math.abs(touchDifferenceY) > swipeThreshold) {
-      if (touchDifferenceY > 0) {
-        // Swiping Up -> Next Card
-        navigateCard('next');
-      } else {
-        // Swiping Down -> Previous Card
-        navigateCard('prev');
-      }
-    }
-    setTouchStartY(null);
-  };
-  
-  // --- CLICK HANDLING (Fallback/Manual Navigation) ---
-
-  const handleMainClick = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickY = e.clientY - rect.top; 
-    
-    const isClickOnInteractive = (target: EventTarget) => {
-        return ['BUTTON', 'A'].includes((target as HTMLElement).tagName) || (target as HTMLElement).closest('button, a');
-    };
-
-    if (isClickOnInteractive(e.target)) {
-        return;
-    }
-
-    if (clickY < rect.height / 2) {
-      navigateCard('prev'); 
-    } else {
-      navigateCard('next');
-    }
-  };
+  // --- SCROLL/TOUCH HANDLERS REMOVED ---
+  // handleScroll, handleTouchStart, handleTouchEnd, and their useEffect cleanup are all removed.
   
   if (!currentTheme) {
     return null;
@@ -326,7 +249,6 @@ export default function Home() {
 
   return (
     <main 
-      ref={mainRef} 
       className="relative flex h-screen min-h-screen flex-col items-center justify-center p-2 sm:p-4 text-white text-center font-sans overflow-hidden focus:outline-none"
       tabIndex={-1} 
     >
@@ -342,7 +264,11 @@ export default function Home() {
       {/* Background Layer 2: Animated Gradient Overlay (Subtle Glow) */}
       <div 
           className="absolute inset-0 z-10 opacity-30" 
-        
+          style={{
+              backgroundImage: `linear-gradient(45deg, #0f172a 0%, #1d4ed8 25%, #059669 50%, #e93b82 75%, #0f172a 100%)`,
+              backgroundSize: '400% 400%',
+              animation: 'gradient-shift 30s ease infinite', 
+          }}
       />
       
       {/* Audio Element and Button */}
@@ -371,18 +297,15 @@ export default function Home() {
       {/* Main Content Container (3D Viewport) */}
       
       <div 
-        onClick={handleMainClick}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] shadow-3xl h-[55vh] md:h-[85vh] flex flex-col items-center justify-between overflow-hidden transition-all duration-800 ease-in-out `} 
-        
+        // onTouchStart and onTouchEnd are removed here
+        className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] shadow-3xl h-[65vh] md:h-[85vh] flex flex-col items-center justify-between overflow-hidden transition-all duration-800 ease-in-out `} 
       >
         
         {/* Inner container for 3D card viewport */}
         <div className="relative w-full h-full flex-grow">
           
           {/* Card 0: Logo and Urdu Headings */}
-          <Card index={0} currentIndex={cardIndex} currentTheme={currentTheme}>
+          <Card index={0} currentIndex={cardIndex} currentTheme={currentTheme} >
              <div className="w-full flex flex-col items-center justify-center py-4">
                 <h1 className={`text-2xl sm:text-5xl font-extrabold my-1 ${cardStyles[0].text} drop-shadow-lg font-jost`}>Salana Ijtema</h1>
                 <h1 className={`text-xl sm:text-3xl font-extrabold mb-2 ${cardStyles[0].text} drop-shadow-lg font-jost`}>Majlis Ansarullah Bharat 2025</h1>
@@ -407,7 +330,7 @@ export default function Home() {
           </Card>
           
           {/* Card 1: Countdown */}
-          <Card index={1} currentIndex={cardIndex} currentTheme={currentTheme}>
+          <Card index={1} currentIndex={cardIndex} currentTheme={currentTheme} >
             <div className="w-full flex flex-col items-center justify-center py-4">
                 <h2 className={`text-2xl sm:text-4xl font-bold ${cardStyles[1].text} mb-6 font-jost tracking-wider`}>Countdown Begins! </h2>
                 <div className={`p-4 rounded-xl shadow-lg`}>
@@ -419,7 +342,7 @@ export default function Home() {
           </Card>
           
           {/* Card 2: Dates and Location */}
-          <Card index={2} currentIndex={cardIndex} currentTheme={currentTheme}>
+          <Card index={2} currentIndex={cardIndex} currentTheme={currentTheme} >
             <div className="w-full flex flex-col items-center justify-center py-4">
                 <h2 className={`text-3xl sm:text-4xl font-bold ${cardStyles[2].text} mb-8 font-jost tracking-wider`}>Event Details</h2>
                 
@@ -438,7 +361,7 @@ export default function Home() {
           </Card>
           
           {/* Card 3: Useful Links */}
-          <Card index={3} currentIndex={cardIndex} currentTheme={currentTheme}>
+          <Card index={3} currentIndex={cardIndex} currentTheme={currentTheme} >
             <div className="w-full flex flex-col items-center justify-center py-4">
                 <h2 className={`text-3xl sm:text-4xl font-bold ${cardStyles[3].text} mb-6 font-jost tracking-wider`}>Useful Links</h2>
                 <div className="grid grid-cols-1 gap-2 mt-4 w-full max-w-xs"> 
@@ -465,51 +388,28 @@ export default function Home() {
           </Card>
         </div>
 
-        {/* Navigation Arrows (Vertical: Up/Down) */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            navigateCard('prev');
-          }}
-          className={`absolute top-0 left-1/2 transform -translate-x-1/2 pt-2 pb-1 px-3 rounded-b-lg text-white/50 hover:text-white transition-colors cursor-pointer z-50 ${cardIndex === 0 ? 'opacity-30 pointer-events-none' : ''}`}
-          aria-label="Previous slide"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-          </svg>
-        </button>
+        {/* Navigation Dots Indicator (Removed) */}
+      </div>
 
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            navigateCard('next');
-          }}
-          className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 pb-2 pt-1 px-3 rounded-t-lg text-white/50 hover:text-white transition-colors cursor-pointer z-50 ${cardIndex === totalCards - 1 ? 'opacity-30 pointer-events-none' : ''}`}
-          aria-label="Next slide"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-
-        {/* Navigation Dots Indicator */}
-        <div className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 flex flex-col space-y-2 z-50">
-          {Array.from({ length: totalCards }).map((_, index) => (
-            <button
-              key={index}
-              onClick={(e) => {
-                e.stopPropagation();
-                setCardIndex(index);
-              }}
-              className={`h-2 w-2 rounded-full transition-all duration-300 ${
-                index === cardIndex 
-                  ? `h-3 w-3 ${activeCardStyle.text.replace('text-', 'bg-')}` 
-                  : 'bg-white/30 hover:bg-white/60'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
+      {/* --- Card Number Navigation Buttons (REMAINS) --- */}
+      <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-50 p-2 rounded-full backdrop-blur-3xl shadow-xl">
+            {Array.from({ length: totalCards }).map((_, navIndex) => (
+              <button
+                key={navIndex}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCardIndexDirectly(navIndex);
+                }}
+                className={`w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full text-sm font-semibold transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-black/50 
+                  ${navIndex === cardIndex 
+                    ? `bg-red-600 text-black scale-110` 
+                    : 'bg-white/10 text-white hover:bg-white/30'
+                  }`}
+                aria-label={`Go to card ${navIndex + 1}`}
+              >
+                {navIndex + 1}
+              </button>
+            ))}
       </div>
     </main>
   );

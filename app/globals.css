@@ -107,6 +107,7 @@
   animation: pulse-shadow 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-html{
-  background-image: url('/images/backgrounds/background1.jpg');
+html, body {
+  background-color: black;
 }
+
