@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 
 interface CountdownProps {
   targetDate: Date;
+  textColor?: string;
 }
 
 // Define the colors for the countdown numbers
@@ -15,7 +16,7 @@ const countdownColors = [
   'text-orange-300',
 ];
 
-const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
+const Countdown: React.FC<CountdownProps> = ({ targetDate}) => {
   const calculateTimeLeft = () => {
     const difference = +targetDate - +new Date();
     let timeLeft: { days?: number; hours?: number; minutes?: number; seconds?: number } = {};
@@ -49,9 +50,9 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
     }
 
     return (
-      <div key={interval} className="flex flex-col items-center text-center bg-white/10 rounded-xl p-2 sm:p-4 w-1/4 backdrop-blur-sm shadow-lg animate-pulseGlow">
+      <div key={interval} className="flex flex-col items-center text-center bg-white/10  sm:p-4 w-1/4 backdrop-blur-sm shadow-lg animate-pulseGlow">
         <span 
-          className={`text-3xl sm:text-3xl md:text-5xl font-bold transition-transform duration-500 ${countdownColors[currentColorIndex]}`}>
+          className={`text-2xl sm:text-3xl md:text-5xl font-bold transition-transform duration-500 ${countdownColors[currentColorIndex]}`}>
           {String(timeLeft[interval as keyof typeof timeLeft]).padStart(2, '0')}
         </span>
         <span className="text-xs sm:text-sm md:text-base uppercase tracking-wider mt-1 text-gray-200">{interval}</span>
