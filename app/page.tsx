@@ -100,16 +100,24 @@ interface CardProps {
   children: React.ReactNode;
 }
 
+// Interface for custom CSS variable used in glowStyle
+interface GlowStyle extends React.CSSProperties {
+    '--glow-color': string;
+}
+
 const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
   const isActive = index === currentIndex;
   const { gradient, text, border, bgColor } = cardStyles[index]; 
   
+  // FIX: Changed let to const for properties only assigned once
+  const cardBgStyle: React.CSSProperties = {};
+  const cardBorderClass = border;
+  
   let transform = 'translateZ(0) rotateX(0deg)';
   let opacity = 1;
   let zIndex = 10;
-  let pointerEvents = 'auto';
-  let cardBgStyle: React.CSSProperties = {};
-  let cardBorderClass = border;
+  // FIX: Used explicit type for reassigned variable
+  let pointerEvents: 'auto' | 'none' = 'auto'; 
   
   let animationClasses = '';
   let outerCardClasses = 'transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]'; 
@@ -134,7 +142,7 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
     transform = `translateZ(${offset * 50}px) translateY(${translationY}%) rotateX(${rotationX}deg)`; 
     opacity = 0.9; 
     zIndex = 60 + index; 
-    pointerEvents = 'none';
+    pointerEvents = 'none'; // Reassignment is okay as it was declared with 'let'
     
     // Use static gradient/color for the peeled stack via inline style
     cardBgStyle.backgroundImage = cardStyles[index].gradient;
@@ -156,14 +164,15 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
 
   // --- GLOW EFFECT LOGIC ---
   const glowColor = cardStyles[index].bgColor;
-  const glowStyle = {
+  // FIX: Explicitly typed to include the custom CSS variable
+  const glowStyle: GlowStyle = { 
     '--glow-color': glowColor,
     boxShadow: `
       0 0 15px rgba(255, 255, 255, 0.1),
       0 0 30px var(--glow-color, rgba(255, 255, 255, 0.15)),
       0 0 45px var(--glow-color, rgba(255, 255, 255, 0.05))
     `,
-  } as React.CSSProperties & Record<string, any>;
+  };
 
   return (
     <div
@@ -172,11 +181,11 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
         transform,
         opacity,
         zIndex,
-        pointerEvents: pointerEvents as React.CSSProperties['pointerEvents'],
+        // FIX: pointerEvents is now correctly typed
+        pointerEvents: pointerEvents, 
       }}
     >
       <div 
-        // 👇 Applying the glow style here
         className={`w-full h-full flex flex-col items-center justify-center rounded-[30px] sm:rounded-[40px] transition-all duration-300 transition-colors border ${cardBorderClass} ${animationClasses} overflow-y-auto`}
         style={{ ...cardBgStyle, ...glowStyle }} 
       >
@@ -332,7 +341,8 @@ export default function Home() {
 
       {/* Background Layer 2: Animated Gradient Overlay (Subtle Glow) */}
       <div 
-          className="absolute inset-0 z-10 opacity-30"
+          className="absolute inset-0 z-10 opacity-30" 
+        
       />
       
       {/* Audio Element and Button */}
@@ -364,7 +374,6 @@ export default function Home() {
         onClick={handleMainClick}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        // Increased z-index to 20 to sit above the animated background
         className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] shadow-3xl h-[55vh] md:h-[85vh] flex flex-col items-center justify-between overflow-hidden transition-all duration-800 ease-in-out `} 
         
       >
