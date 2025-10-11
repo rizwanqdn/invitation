@@ -25,16 +25,25 @@ const themes: Theme[] = [
     linkHoverBg: 'hover:bg-indigo-700/60',
     shadow: 'shadow-indigo-500',
   },
-  {
-    background: "/backgrounds/background2.jpg",
-    containerBackground: 'bg-gray-950',
-    containerBorder: "border-gray-500/30",
-    textColor: "text-gray-300",
-    linkHoverBg: 'hover:bg-gray-700/60',
-    shadow: 'shadow-gray-500',
-  },
+
   {
     background: "/backgrounds/background3.jpg",
+    containerBackground: 'bg-teal-950',
+    containerBorder: "border-teal-400/30",
+    textColor: "text-teal-200",
+    linkHoverBg: 'hover:bg-teal-700/60',
+    shadow: 'shadow-teal-500',
+  },
+   {
+    background: "/backgrounds/background4.jpg",
+    containerBackground: 'bg-teal-950',
+    containerBorder: "border-teal-400/30",
+    textColor: "text-teal-200",
+    linkHoverBg: 'hover:bg-teal-700/60',
+    shadow: 'shadow-teal-500',
+  },
+   {
+    background: "/backgrounds/background5.jpg",
     containerBackground: 'bg-teal-950',
     containerBorder: "border-teal-400/30",
     textColor: "text-teal-200",
@@ -49,14 +58,7 @@ const themes: Theme[] = [
     linkHoverBg: 'hover:bg-yellow-700/60',
     shadow: 'shadow-yellow-500',
   },
-  {
-    background: "/black-pattern.jpg",
-    containerBackground: 'bg-zinc-950',
-    containerBorder: "border-white/30",
-    textColor: "text-white",
-    linkHoverBg: 'hover:bg-zinc-800/60',
-    shadow: 'shadow-white',
-  },
+
 ];
 
 const cardStyles = [
