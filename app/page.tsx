@@ -5,7 +5,7 @@ import Image from 'next/image';
 // Assuming the path to your Countdown component is correct
 import Countdown from './components/Countdown'; 
 
-// --- Theme Definitions (Unchanged) ---
+// --- Theme Definitions ---
 
 type Theme = {
   background: string;
@@ -60,38 +60,38 @@ const themes: Theme[] = [
 ];
 
 const cardStyles = [
-  // Card 0: Logo & Headings - Deep Teal/Blue
+  // Card 0: Logo & Headings - Teal for glow
   { 
-    gradient: 'linear-gradient(140deg, #0e7490 0%, #1d4ed8 100%)', 
+    gradient: '', // Not used in Glassmorphism
     text: 'text-cyan-100', 
     border: 'border-cyan-400',
-    bgColor: '#0e7490' // Teal
+    bgColor: '#0e7490' // Teal for glow
   },
-  // Card 1: Countdown - Forest Green/Emerald
+  // Card 1: Countdown - Emerald for glow
   { 
-    gradient: 'linear-gradient(140deg, #16a34a 0%, #059669 100%)', 
+    gradient: '', // Not used in Glassmorphism
     text: 'text-green-100', 
     border: 'border-green-400',
-    bgColor: '#059669' // Emerald
+    bgColor: '#059669' // Emerald for glow
   },
-  // Card 2: Details - ELECTRIC VIOLET (Modern Variant) ⚡
+  // Card 2: Details - Violet for glow
   { 
-    gradient: 'linear-gradient(140deg, #e93b82 0%, #663399 100%)', 
+    gradient: '', // Not used in Glassmorphism
     text: 'text-pink-100', 
     border: 'border-pink-400', 
-    bgColor: '#8A2BE2' 
+    bgColor: '#8A2BE2' // Violet for glow
   },
-  // Card 3: Links - Deep Orange/Red
+  // Card 3: Links - Orange for glow
   { 
-    gradient: 'linear-gradient(140deg, #c2410c 0%, #b91c1c 100%)', 
-    text: 'text-blue-900', 
+    gradient: '', // Not used in Glassmorphism
+    text: 'text-blue-900', // Note: Using blue text against glass for contrast
     border: 'border-orange-400',
-    bgColor: '#7393B3' // Red
+    bgColor: '#c2410c' // Orange for glow
   },
 ];
 const totalCards = 4;
 
-// --- Card Component (Simplified) ---
+// --- Card Component (Glassmorphism) ---
 
 interface CardProps {
   index: number;
@@ -106,10 +106,9 @@ interface GlowStyle extends React.CSSProperties {
 
 const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
   const isActive = index === currentIndex;
-  const { text, border, bgColor } = cardStyles[index]; 
+  const { text, border } = cardStyles[index]; 
   
-  const cardBgStyle: React.CSSProperties = {};
-  const cardBorderClass = border;
+  const cardBorderClass = border.replace('border-', 'border-'); // Keep border class
   
   let transform = 'translateZ(0) rotateX(0deg)';
   let opacity = 1;
@@ -122,10 +121,8 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
   if (isActive) {
     transform = 'translateZ(10px) scale(1)'; 
     zIndex = 50;
-    cardBgStyle.backgroundColor = bgColor; 
     animationClasses = 'animate-fadeInUp'; 
     outerCardClasses += ' hover:scale-[1.01]'; 
-    // Ensure active card content is pointer-events auto for links/buttons inside children
     pointerEvents = 'auto'; 
   } else if (index < currentIndex) {
     const offset = currentIndex - index;
@@ -136,8 +133,6 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
     opacity = 0.9; 
     zIndex = 60 + index; 
     pointerEvents = 'none';
-    cardBgStyle.backgroundImage = cardStyles[index].gradient;
-    cardBgStyle.opacity = 0.7;
   } else {
     const offset = index - currentIndex;
     const translationY = offset * 5; 
@@ -145,18 +140,17 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
 
     transform = `translateZ(-${offset * 50}px) translateY(${translationY}%) scale(${scale})`;
     zIndex = 40 - offset; 
-    cardBgStyle.backgroundImage = cardStyles[index].gradient;
-    cardBgStyle.opacity = 0.8; 
     outerCardClasses += ' hover:scale-[1.01]'; 
   }
 
   const glowColor = cardStyles[index].bgColor;
+  // Adjusted glow style for a more subtle glass effect
   const glowStyle: GlowStyle = { 
     '--glow-color': glowColor,
     boxShadow: `
-      0 0 15px rgba(255, 255, 255, 0.1),
-      0 0 30px var(--glow-color, rgba(255, 255, 255, 0.15)),
-      0 0 45px var(--glow-color, rgba(255, 255, 255, 0.05))
+      0 0 5px rgba(255, 255, 255, 0.2), /* Inner light */
+      0 0 10px var(--glow-color, rgba(255, 255, 255, 0.1)), /* Subtle color glow */
+      0 0 20px var(--glow-color, rgba(255, 255, 255, 0.05)) /* Wider, softer glow */
     `,
   };
 
@@ -171,10 +165,11 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
       }}
     >
       <div 
-        className={`w-full h-full flex flex-col items-center justify-center rounded-[30px] sm:rounded-[40px] transition-all duration-300 transition-colors border ${cardBorderClass} ${animationClasses} overflow-y-auto relative`} 
-        style={{ ...cardBgStyle, ...glowStyle }} 
+        // Glassmorphism classes applied here
+        className={`w-full h-full flex flex-col items-center justify-center rounded-[30px] sm:rounded-[40px] transition-all duration-300 transition-colors border ${cardBorderClass} ${animationClasses} overflow-y-auto relative 
+          backdrop-blur-xl bg-white/10 border-white/20`}
+        style={{ ...glowStyle }} 
       >
-        {/* Removed pointerEvents: 'none' wrap to allow links/buttons inside children */}
         <div>
             {children}
         </div>
@@ -183,7 +178,7 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
   );
 };
 
-// --- Main Component (Modified to remove all scroll/swipe/dot navigation) ---
+// --- Main Component ---
 
 export default function Home() {
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
@@ -203,8 +198,6 @@ export default function Home() {
   // Ref to hold the most current card index for stable handlers
   const currentCardIndexRef = useRef(cardIndex); 
   
-  // scrollTimeoutRef and isScrollLockedRef removed as scrolling is disabled
-
   const targetDate = new Date('2025-10-24T00:00:00');
 
   useEffect(() => {
@@ -237,16 +230,11 @@ export default function Home() {
       setCardIndex(index);
   }, []);
 
-  // --- SCROLL/TOUCH HANDLERS REMOVED ---
-  // handleScroll, handleTouchStart, handleTouchEnd, and their useEffect cleanup are all removed.
   
   if (!currentTheme) {
     return null;
   }
   
-  const activeCardStyle = cardStyles[cardIndex];
-
-
   return (
     <main 
       className="relative flex h-screen min-h-screen flex-col items-center justify-center p-2 sm:p-4 text-white text-center font-sans overflow-hidden focus:outline-none"
@@ -292,7 +280,6 @@ export default function Home() {
       {/* Main Content Container (3D Viewport) */}
       
       <div 
-        // onTouchStart and onTouchEnd are removed here
         className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] h-[54vh] md:h-[85vh] flex flex-col items-center justify-between overflow-hidden transition-all duration-800 ease-in-out `} 
       >
         
@@ -372,7 +359,7 @@ export default function Home() {
                             href={link.href} 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className={`w-full text-sm font-medium px-3 py-2 rounded-full text-white transition-all duration-300 transform hover:scale-[1.03] border ${cardStyles[3].border} shadow-md hover:shadow-lg`} 
+                            className={`w-full text-sm font-medium px-3 py-2 rounded-full text-white transition-all duration-300 transform hover:scale-[1.03] border ${cardStyles[3].border} shadow-md hover:shadow-lg backdrop-blur-sm bg-black/20`} 
                           
                         >
                             {link.text}
@@ -383,11 +370,8 @@ export default function Home() {
           </Card>
         </div>
 
-        {/* Navigation Dots Indicator (Removed) */}
-      </div>
-
-      {/* --- Card Number Navigation Buttons (REMAINS) --- */}
-      <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-50 p-2 rounded-full backdrop-blur-3xl shadow-xl">
+        {/* --- Card Number Navigation Buttons --- */}
+      <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-50 p-2 rounded-full backdrop-blur-md shadow-xl">
             {Array.from({ length: totalCards }).map((_, navIndex) => (
               <button
                 key={navIndex}
@@ -406,6 +390,7 @@ export default function Home() {
               </button>
             ))}
       </div>
+    </div>
     </main>
   );
 }
