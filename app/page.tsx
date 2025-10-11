@@ -5,7 +5,7 @@ import Image from 'next/image';
 // Assuming the path to your Countdown component is correct
 import Countdown from './components/Countdown'; 
 
-// --- Theme Definitions ---
+// --- Theme Definitions (Unchanged) ---
 
 type Theme = {
   background: string;
@@ -63,28 +63,29 @@ const cardStyles = [
   // Card 0: Logo & Headings - Teal for glow
   { 
     gradient: '', // Not used in Glassmorphism
-    text: 'text-cyan-100', 
+    text: 'text-yellow-500', 
     border: 'border-cyan-400',
     bgColor: '#0e7490' // Teal for glow
   },
   // Card 1: Countdown - Emerald for glow
   { 
     gradient: '', // Not used in Glassmorphism
-    text: 'text-green-100', 
+    text: 'text-yellow-400', 
     border: 'border-green-400',
     bgColor: '#059669' // Emerald for glow
+    
   },
   // Card 2: Details - Violet for glow
   { 
     gradient: '', // Not used in Glassmorphism
-    text: 'text-pink-100', 
+    text: 'text-yellow-500', 
     border: 'border-pink-400', 
     bgColor: '#8A2BE2' // Violet for glow
   },
   // Card 3: Links - Orange for glow
   { 
     gradient: '', // Not used in Glassmorphism
-    text: 'text-blue-900', // Note: Using blue text against glass for contrast
+    text: 'text-yellow-500', // Note: Using blue text against glass for contrast
     border: 'border-orange-400',
     bgColor: '#c2410c' // Orange for glow
   },
@@ -106,9 +107,11 @@ interface GlowStyle extends React.CSSProperties {
 
 const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
   const isActive = index === currentIndex;
+  // Use a more universally readable color for the primary heading inside the card
+  const headingText = index === 3 ? 'text-white' : 'text-yellow-300'; 
   const { text, border } = cardStyles[index]; 
   
-  const cardBorderClass = border.replace('border-', 'border-'); // Keep border class
+  const cardBorderClass = border.replace('border-', 'border-'); 
   
   let transform = 'translateZ(0) rotateX(0deg)';
   let opacity = 1;
@@ -148,9 +151,9 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
   const glowStyle: GlowStyle = { 
     '--glow-color': glowColor,
     boxShadow: `
-      0 0 5px rgba(255, 255, 255, 0.2), /* Inner light */
-      0 0 10px var(--glow-color, rgba(255, 255, 255, 0.1)), /* Subtle color glow */
-      0 0 20px var(--glow-color, rgba(255, 255, 255, 0.05)) /* Wider, softer glow */
+      0 0 5px rgba(255, 255, 255, 0.2), 
+      0 0 10px var(--glow-color, rgba(255, 255, 255, 0.1)), 
+      0 0 20px var(--glow-color, rgba(255, 255, 255, 0.05)) 
     `,
   };
 
@@ -166,11 +169,27 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
     >
       <div 
         // Glassmorphism classes applied here
-        className={`w-full h-full flex flex-col items-center justify-center rounded-[30px] sm:rounded-[40px] transition-all duration-300 transition-colors border ${cardBorderClass} ${animationClasses} overflow-y-auto relative 
+        className={`w-full h-full flex flex-col items-center justify-start rounded-[30px] sm:rounded-[40px] transition-all duration-300 transition-colors border ${cardBorderClass} ${animationClasses} overflow-y-auto relative 
           backdrop-blur-xl bg-white/10 border-white/20`}
         style={{ ...glowStyle }} 
       >
-        <div>
+        
+        {/* --- REPLICATED HEADING INSIDE EVERY CARD --- */}
+        <div className={`p-4 w-full text-center border-b border-white/10 ${isActive ? '' : 'opacity-70'}`}>
+            <h1 className={`text-2xl sm:text-6xl pb-2 font-extrabold ${headingText} drop-shadow-lg font-jost`}>
+                Salana Ijtema
+            </h1>
+            <h1 className={`text-sm sm:text-3xl font-extrabold ${headingText}/80 drop-shadow-lg font-jost`}>
+                Majlis Ansarullah Bharat
+            </h1>
+             <h1 className={`text-sm sm:text-4xl font-extrabold ${headingText}/80 drop-shadow-lg font-jost`}>
+              2025
+            </h1>
+            
+        </div>
+        
+        {/* Card Specific Content */}
+        <div className="flex-grow flex items-center justify-center w-full">
             {children}
         </div>
       </div>
@@ -286,15 +305,12 @@ export default function Home() {
         {/* Inner container for 3D card viewport */}
         <div className="relative w-full h-full flex-grow">
           
-          {/* Card 0: Logo and Urdu Headings */}
+          {/* Card 0: Logo and Urdu Headings (English Heading moved to Card component) */}
           <Card index={0} currentIndex={cardIndex} currentTheme={currentTheme} >
              <div className="w-full flex flex-col items-center justify-center py-4">
-                <h1 className={`text-2xl sm:text-5xl font-extrabold my-1 ${cardStyles[0].text} drop-shadow-lg font-jost`}>Salana Ijtema</h1>
-                <h1 className={`text-xl sm:text-3xl font-extrabold mb-2 ${cardStyles[0].text} drop-shadow-lg font-jost`}>Majlis Ansarullah Bharat 2025</h1>
-                <div className={`w-1/3 h-1 ${cardStyles[0].border.replace('border-', 'bg-').replace('/50', '')} rounded-full mt-2 opacity-50`}></div>
-            
-
-                <div className="relative w-28 h-28 md:w-40 md:h-40  transform hover:scale-105 transition-transform duration-500">
+                {/* English headings removed from here */}
+                
+                <div className="relative w-28 h-28 md:w-40 md:h-40  transform hover:scale-105 transition-transform duration-500 mt-[-20px] sm:mt-0">
                 <Image
                     src="/ansarullah-logo.png"
                     alt="Majlis Ansarullah Logo"
