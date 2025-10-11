@@ -175,14 +175,14 @@ const Card: React.FC<CardProps> = ({ index, currentIndex, children }) => {
       >
         
         {/* --- REPLICATED HEADING INSIDE EVERY CARD --- */}
-        <div className={`p-4 w-full text-center border-b border-white/10 ${isActive ? '' : 'opacity-70'}`}>
-            <h1 className={`text-2xl sm:text-6xl pb-2 font-extrabold ${headingText} drop-shadow-lg font-jost`}>
+        <div className={`p-4 w-full mt-6 text-center border-b border-white/10 ${isActive ? '' : 'opacity-70'}`}>
+            <h1 className={`text-4xl sm:text-6xl pb-2 font-extrabold ${headingText} drop-shadow-lg font-jost`}>
                 Salana Ijtema
             </h1>
-            <h1 className={`text-sm sm:text-3xl font-extrabold ${headingText}/80 drop-shadow-lg font-jost`}>
+            <h1 className={`text-l sm:text-3xl font-extrabold ${headingText}/80 drop-shadow-lg font-jost`}>
                 Majlis Ansarullah Bharat
             </h1>
-             <h1 className={`text-sm sm:text-4xl font-extrabold ${headingText}/80 drop-shadow-lg font-jost`}>
+             <h1 className={`text-xl sm:text-4xl font-extrabold ${headingText}/80 drop-shadow-lg font-jost`}>
               2025
             </h1>
             
@@ -299,7 +299,7 @@ export default function Home() {
       {/* Main Content Container (3D Viewport) */}
       
       <div 
-        className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] h-[54vh] md:h-[85vh] flex flex-col items-center justify-between overflow-hidden transition-all duration-800 ease-in-out `} 
+        className={`relative z-20 w-full max-w-sm sm:max-w-3xl p-3 sm:p-10 rounded-[40px] h-[74vh] md:h-[85vh] flex flex-col items-center justify-between overflow-hidden transition-all duration-800 ease-in-out `} 
       >
         
         {/* Inner container for 3D card viewport */}
@@ -334,8 +334,8 @@ export default function Home() {
                 <div className={`p-4 rounded-xl shadow-lg`}>
                 <Countdown targetDate={targetDate} textColor={cardStyles[1].text} /> 
                 </div>
-                <p className={`text-base sm:text-lg font-light ${cardStyles[1].text} opacity-80 mt-6 font-lato`}>Time left until this inspiring and memorable event.</p>
-                <h3 className={`text-xl sm:text-2xl font-extrabold ${cardStyles[1].text} mt-4 font-jost animate-bounce-subtle`}>JOIN US</h3>
+                <p className={`text-xl sm:text-lg font-lato ${cardStyles[1].text} opacity-80 mt-6 font-lato`}>Time left until this inspiring and memorable event.</p>
+                <h3 className={`text-l sm:text-2xl font-extrabold ${cardStyles[1].text} mt-4 font-jost animate-bounce-subtle`}>JOIN US</h3>
             </div>
           </Card>
           
@@ -346,11 +346,14 @@ export default function Home() {
                 
                 <div className={`p-4 w-full max-w-xs sm:max-w-sm rounded-xl shadow-xl`}> 
                 <p className="text-xl sm:text-3xl font-extrabold text-amber-200 mb-4 font-lato flex items-center justify-center"> 
-                    <span className="mr-3 text-2xl sm:text-3xl">🗓️</span> Dates: 24 | 25 | 26 Oct 2025
+                   Dates: 24 | 25 | 26 Oct 2025
+                </p>
+                 <p className="text-xl sm:text-3xl font-extrabold text-amber-200 mb-4 font-lato flex items-center justify-center"> 
+                  Friday | Saturday | Sunday
                 </p>
                 <div className="w-full h-px bg-white/20 my-4"></div>
                 <p className="text-lg sm:text-2xl font-extrabold text-gray-300 mb-4 font-lato flex items-center justify-center"> 
-                    <span className="mr-3 text-xl sm:text-2xl">📍</span> Location: Qadian, Punjab, India
+                    Qadian, Punjab, India
                 </p>
                 </div>
 
